@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { PriceCard, PriceCardSkeleton } from "@/components/price-card"
 import { VixGauge, VixGaugeSkeleton } from "@/components/vix-gauge"
 import { BiasResultCard, BiasResultCardSkeleton } from "@/components/bias-result-card"
@@ -12,10 +12,10 @@ const TICKERS = ["SPY", "QQQ", "DIA"] as const
 type Status = "idle" | "loading" | "done"
 
 export default function Home() {
-  const [priceStatus, setPriceStatus] = useState<Status>("idle")
+  const [priceStatus, setPriceStatus] = useState<Status>("loading")
   const [prices, setPrices] = useState<Record<string, PriceData | null>>({})
 
-  const [newsStatus, setNewsStatus] = useState<Status>("idle")
+  const [newsStatus, setNewsStatus] = useState<Status>("loading")
   const [news, setNews] = useState<Record<string, NewsArticle[]>>({})
 
   const spyAnalysis = useAnalyze("SPY")
@@ -25,11 +25,7 @@ export default function Home() {
 
   const analyses = { SPY: spyAnalysis, QQQ: qqqAnalysis, DIA: diaAnalysis }
 
-  const refresh = useCallback(async () => {
-    setPriceStatus("loading")
-    setNewsStatus("loading")
-
-    // Prices + news in parallel
+  const fetchData = useCallback(async () => {
     const [priceRes, ...newsResults] = await Promise.all([
       fetch("/api/price").then((r) => r.json()),
       ...TICKERS.map((t) =>
@@ -49,14 +45,24 @@ export default function Home() {
     setNews(newsMap)
     setNewsStatus("done")
 
-    // Trigger analysis for all cards in parallel
     spyAnalysis.trigger()
     qqqAnalysis.trigger()
     diaAnalysis.trigger()
     marketAnalysis.trigger()
   }, [spyAnalysis, qqqAnalysis, diaAnalysis, marketAnalysis])
 
-  const allNews = Object.values(news).flat()
+  const refresh = useCallback(() => {
+    setPriceStatus("loading")
+    setNewsStatus("loading")
+    void fetchData()
+  }, [fetchData])
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { void fetchData() }, [])
+
+  const allNews = Object.values(news).flat().filter(
+    (a, i, arr) => arr.findIndex((b) => b.url === a.url) === i
+  )
   const anyAnalyzing =
     spyAnalysis.streaming || qqqAnalysis.streaming || diaAnalysis.streaming || marketAnalysis.streaming
 
