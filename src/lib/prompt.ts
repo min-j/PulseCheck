@@ -19,7 +19,9 @@ Rules:
 - confidence is an integer 0-100 reflecting your certainty
 - The summary must be grounded in the news provided — do not invent facts
 - Do not repeat the label in the summary
-- Write in present tense, concise and direct`
+- Write in present tense, concise and direct
+- Prioritize high-impact catalysts over background noise: Fed rate decisions and FOMC commentary, statements from the President or Treasury on tariffs/trade/fiscal policy, key economic releases (CPI, PCE, jobs/unemployment, GDP, consumer sentiment), and earnings surprises from index heavyweights carry more weight than routine analyst notes or minor company news
+- If a catalyst is present that could cause a sharp move (e.g. a surprise Fed pivot, a major tariff announcement, a blowout or miss on unemployment), reflect that urgency in both the label and the confidence score`
 }
 
 export function userMessage(ticker: string, chunks: RetrievedChunk[]): string {
