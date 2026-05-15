@@ -70,7 +70,18 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center px-4 py-16 gap-8">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#111827" className="dark:fill-gray-50" />
+            <polyline
+              points="3,16 9,16 12,8 16,24 20,10 24,18 29,16"
+              fill="none"
+              stroke="#34d399"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           Pulse Check
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -82,6 +93,7 @@ export default function Home() {
       <button
         onClick={refresh}
         disabled={priceStatus === "loading" || anyAnalyzing}
+        suppressHydrationWarning
         className="rounded-lg bg-gray-900 dark:bg-gray-50 text-white dark:text-gray-900 text-sm font-medium px-5 py-2.5 hover:bg-gray-700 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {priceStatus === "loading"
